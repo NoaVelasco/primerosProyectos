@@ -1,3 +1,9 @@
+# Python 3.10.2 UTF-8
+# Copyright (c) 2022, Noa Velasco. 
+# CRUD v.2.220317.1
+
+# Este CRUD forma parte de un ejercicio de Píldoras Informáticas.
+
 import sqlite3
 from tkinter import *
 from tkinter import messagebox as msg
@@ -30,9 +36,10 @@ class Conexion:
 
     def conectarBBDD(self):
         
+        self.miConex = sqlite3.connect(self.bbdd)
+        self.miCursor = self.miConex.cursor()
+            
         try:
-            self.miConex = sqlite3.connect(self.bbdd)
-            self.miCursor = self.miConex.cursor()
             
             self.miCursor.execute("""--sql
                     CREATE TABLE DATOSUSUARIOS (
@@ -57,8 +64,10 @@ usuarios = Conexion("usuarios.db")
 def salirAplicacion():
     valor = msg.askokcancel("Salir", "¿De verdad quieres salir?")
     if valor == True:
-        usuarios.closeBBDD()
-        root.destroy()
+        try:
+            usuarios.closeBBDD()
+        finally:
+            root.destroy()
 
 #_____________RESET CAMPOS_____________________
 
@@ -144,21 +153,16 @@ def deleteFrom():
     global inputSQL
     global usuarios
     
+    inputSQL = [(cuadroID.get())]
+
+    usuarios.miCursor.execute(
+        "SELECT * FROM DATOSUSUARIOS WHERE ID=(?)", inputSQL)
+
+    comprobacion = usuarios.miCursor.fetchall()
+
     try:
-        inputSQL = [(cuadroID.get())]
-
-        usuarios.miCursor.execute(
-            "SELECT * FROM DATOSUSUARIOS WHERE ID=(?)", inputSQL)
-
-        busqueda = usuarios.miCursor.fetchall()
-        busqueda = usuarios.miCursor.fetchall()
-        selectID.set(busqueda[0][0])
-        selectNom.set(busqueda[0][1])
-        selectApe.set(busqueda[0][2])
-        selectPass.set(busqueda[0][3])
-        selectDir.set(busqueda[0][4])
-        textoComentario.insert('1.0', busqueda[0][5])
-        
+        selectID.set(comprobacion[0][0])
+    
         usuarios.miConex.commit()
             
         usuarios.miCursor.execute(
@@ -166,10 +170,10 @@ def deleteFrom():
         usuarios.miConex.commit()
             
         msg.showinfo("BB. DD.", "Registro eliminado con éxito.")
-        
-
-    except:
+    
+    except IndexError:
         msg.showwarning("Atención", "No existe ningún registro con esa ID.")
+
 
 
 #______________INFO____________________

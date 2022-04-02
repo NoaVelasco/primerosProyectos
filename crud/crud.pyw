@@ -1,6 +1,6 @@
 # Python 3.10.2 UTF-8
 # Copyright (c) 2022, Noa Velasco. 
-# CRUD v.2.220317.1
+# CRUD v.2.220317.2
 
 # Este CRUD forma parte de un ejercicio de Píldoras Informáticas.
 
@@ -96,7 +96,7 @@ def insertInto():
     inputSQL = [(cuadroNombre.get(), cuadroApellido.get(), cuadroPass.get(
     ), cuadroDireccion.get(), textoComentario.get('1.0', END))]
     
-    usuarios.miCursor.executemany(
+    usuarios.miCursor.execute(
         "INSERT INTO DATOSUSUARIOS VALUES (NULL,?,?,?,?,?)", inputSQL)
     usuarios.miConex.commit()
     
@@ -137,7 +137,7 @@ def updateSet():
         inputSQL = [(cuadroNombre.get(), cuadroApellido.get(), cuadroPass.get(
         ), cuadroDireccion.get(), textoComentario.get('1.0', END), cuadroID.get())]
 
-        usuarios.miCursor.executemany(
+        usuarios.miCursor.execute(
             "UPDATE DATOSUSUARIOS SET NOMBRE=(?), APELLIDO=(?), CONTRASEÑA=(?), DIRECCION=(?), COMENTARIOS=(?) WHERE ID=(?)", inputSQL
                                     )
         
